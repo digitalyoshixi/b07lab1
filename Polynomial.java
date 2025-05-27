@@ -19,6 +19,29 @@ public class Polynomial{
     this.powers = powers;
   }
   
+  public Polynomial remove_redundant(Polynomial poly){
+    int polylen = poly.powers.length;
+    int realpolylen = 0;
+    double tempcoeff[];
+    int temppowers[];
+
+    for (int i = 0; i < polylen; i++){
+      if (poly.coefficients[i] != 0){
+        realpolylen+=1; 
+      }
+    }
+    Polynomial returnpoly = new Polynomial(new double[realpolylen], new int[realpolylen]);
+    int currindex = 0;
+    for (int i = 0; i < polylen; i++){
+      if (poly.coefficients[i] != 0){
+        returnpoly.coefficients[currindex] = poly.coefficients[i];
+        returnpoly.powers[currindex] = poly.powers[i];
+        currindex+=1;
+      }
+    }
+    return returnpoly;
+  }
+  
   public Polynomial(File inputfile){
     try {
       Scanner scanner = new Scanner(inputfile);
@@ -64,7 +87,7 @@ public class Polynomial{
       returnpoly.coefficients[(int)poly2.powers[i]] += poly2.coefficients[i];
     }
     // return new polynomial 
-    return returnpoly;
+    return remove_redundant(returnpoly);
   }
   public double evaluate(double inputnum){
     double returnsum = 0;
@@ -76,6 +99,8 @@ public class Polynomial{
   public boolean hasRoot(double inputnum){
     return evaluate(inputnum) == 0;
   }
+  
+
   public Polynomial multiply(Polynomial poly2){
     int maxpow1 = this.powers[this.powers.length -1];
     int maxpow2 = poly2.powers[poly2.powers.length -1];
@@ -93,7 +118,8 @@ public class Polynomial{
         returnpoly.coefficients[(int)this.powers[i] + (int)poly2.powers[j]] += this.coefficients[i] * poly2.coefficients[j];
       }
     }
-    return returnpoly;
+    
+    return remove_redundant(returnpoly);
   }
   public String createString(){
     String retstr = "";
